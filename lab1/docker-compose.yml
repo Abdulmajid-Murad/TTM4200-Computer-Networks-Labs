@@ -1,0 +1,77 @@
+version: '2.3'
+#specify a custom network
+networks:
+#the name of the created network
+    ttm4200_net:
+        enable_ipv6: true
+        ipam:
+            config:
+                - subnet: 10.20.30.0/24
+                - subnet: "fd00::/64"
+
+services:
+
+    #Building the base image
+    image:
+        #Build an image from the Dockerfile in the "ttm4200_base" directory
+        build: ./ttm4200_base
+        #Name the image "ttm4200_base", and use it
+        image: ttm4200_base
+
+
+    container1:
+        #use the image "ttm4200_base"
+        image: ttm4200_base
+        #It will depends the service "image", that built the image
+        depends_on:
+            - "image"
+        #Name of the container "container1"
+        container_name: container1
+        #Name the host machine "container1"
+        hostname: container1
+        #Run in "--interactive" mode
+        stdin_open: true
+        #Run in "--tty", pseudo terminal
+        tty: true
+        # Add networking capabilities, instead of privileged
+        cap_add:
+            - NET_ADMIN
+
+    container2:
+    ################################################
+    # TODO: Your code here!
+
+
+    ################################################
+
+    container3:
+    ################################################
+    # TODO: Your code here!
+
+
+    ################################################
+
+    container4:
+    ################################################
+        image: ttm4200_base
+        depends_on:
+            - "image"
+        container_name: container4
+        hostname: container4
+        stdin_open: true
+        tty: true
+        cap_add:
+            - NET_ADMIN
+        #map ssh port to a port on Docker Host (port 400)
+        ports:
+            - "127.0.0.1:4000:22"
+        # mount the "ttm4200_base" directory on Docker Host to the container
+        volumes:
+            - ./ttm4200_base/:/home/ttm4200/work_dir
+        #Connect to the network (ttm4200_net and assign IPv4 and IPv6 addresses)
+        networks:
+            ttm4200_net:
+                ipv4_address: 10.20.30.13
+                ipv6_address: "fd00::13"
+
+    ################################################
